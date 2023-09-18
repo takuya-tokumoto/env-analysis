@@ -1,13 +1,13 @@
-# solafune_classify_genai
+# 目的
 
-- [生成画像とオリジナル画像の分類](https://solafune.com/ja/competitions/05724228-0ac1-4488-a42f-e945f2117632?menu=about&tab=overview)への参加時の解法を掲載。
+- どんな環境でもdockerを用いてクイックにデータ分析用の環境構築を行うため
+
 
 
 ## セットアップ
-### データの準備
+### dorkerの起動して環境構築
 
-- `./tmp/`配下にzipファイルを格納
-- `sh unzip_files.sh`
-
-## ライブラリインストール
-- `pip install -r requirements.txt`
+```
+./build.sh
+./run.sh
+```
