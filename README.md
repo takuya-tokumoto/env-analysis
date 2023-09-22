@@ -4,10 +4,10 @@
 
 # セットアップ
 ## dockerをインストール
-### ec2でubuntuインスタンスを立ち上げた場合
+### docker desktopをインストールする場合
 - [ここ](https://docs.docker.com/desktop/)などを参考にdocker desktopをインストール
 
-### CLIでインストールする際
+### CLIでインストールする場合
 - ec2でubuntuインスタンスを立ち上げた場合などを想定
 ```
 sudo apt-get update
