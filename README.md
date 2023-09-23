@@ -9,7 +9,7 @@
 
 ### CLIでインストールする場合
 - ec2でubuntuインスタンスを立ち上げた場合などを想定
-```
+```shell
 sudo apt-get update
 sudo apt-get install docker.io
 sudo gpasswd -a {ユーザ名:ubuntu} docker
@@ -18,14 +18,14 @@ exit #gpasswdでユーザを付与した後に再ログイン必要
 ```
 
 ## git clone
-```
+```shell
 git clone https://github.com/takuya-tokumoto/env-analysis.git
 cd env-analysis
 ```
 
 ## dorkerの起動して環境構築
 
-```
+```shell
 ./build.sh
 ./run.sh #windows環境の場合は run_for_win.sh を実行
 ```
