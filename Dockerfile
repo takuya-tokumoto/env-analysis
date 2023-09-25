@@ -2,21 +2,22 @@ FROM ubuntu:22.04
 
 RUN DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Tokyo
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone 
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone 
 
 RUN apt-get update -y && apt-get install -y \
-    libgl1-mesa-glx wget curl git tmux imagemagick htop libsndfile1 nodejs npm nfs-common unzip\
+    libgl1-mesa-glx wget curl git \
+    tmux imagemagick htop libsndfile1 \
+    nodejs npm nfs-common unzip \
+    python3 python3-pip\
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip
-RUN pip install wrapt --upgrade --ignore-installed
-RUN pip install gym gym-minigrid pyopengl pylint natsort kfp 
-RUN pip install git+https://github.com/h2oai/datatable
+RUN pip install \
+    wrapt --upgrade --ignore-installed \
+    gym gym-minigrid pyopengl pylint natsort kfp \
+    git+https://github.com/h2oai/datatable
 
-# for jupyter lab tensorboard
 RUN npm install n -g \
     && n stable
 
@@ -28,26 +29,23 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-${MINICONDA_VERSION}-Lin
 
 # Condaの設定
 ENV PATH="/opt/conda/bin:${PATH}"
-RUN conda update -y conda
+RUN conda update -y conda \
+    && conda install -c conda-forge jupyterlab
 
-RUN conda install -c conda-forge jupyterlab
+# RUN pip install matplotlib lightgbm
 
-RUN pip install matplotlib lightgbm
+# code serverのインストール
+RUN conda install jupyter-server-proxy -c conda-forge \
+    && pip install jupyter-vscode-proxy \
+    && pip install ipywidgets widgetsnbextension \
+    && pip install jupyterlab-lsp \
+    && pip install 'python-lsp-server[all]'
 
-# install code server
-RUN conda install jupyter-server-proxy -c conda-forge
-RUN pip install jupyter-vscode-proxy
+# RUN conda install -y libgcc numpy \
+#     && conda update -y numpy
 
-RUN pip install ipywidgets widgetsnbextension
-RUN pip install jupyterlab-lsp
-RUN pip install 'python-lsp-server[all]'
-
-RUN conda install -y libgcc
-RUN conda install -y numpy
-RUN conda update -y numpy
-
-RUN curl -fOL https://github.com/cdr/code-server/releases/download/v3.4.1/code-server_3.4.1_amd64.deb
-RUN dpkg -i code-server_3.4.1_amd64.deb
+RUN curl -fOL https://github.com/cdr/code-server/releases/download/v3.4.1/code-server_3.4.1_amd64.deb \
+    && dpkg -i code-server_3.4.1_amd64.deb
 
 RUN apt-get update -y && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -y dbus-x11 \
@@ -64,7 +62,9 @@ RUN cd /opt/install && \
    conda env update -n base --file environment.yml
 
 # 追加パッケージのインストール
-RUN pip install pandas polars seaborn
+RUN conda install -y libgcc numpy \
+    && conda update -y numpy \
+    && pip install pandas polars seaborn matplotlib lightgbm
 
 # Since uid and gid will change at entrypoint, anything can be used
 ARG USER_ID=1000
@@ -98,11 +98,3 @@ ENV NB_PREFIX /
 ENV SHELL=/bin/bash
 
 CMD ["sh","-c", "jupyter lab --notebook-dir=/home/jovyan --ip=0.0.0.0 --no-browser --allow-root --port=8888 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*' --NotebookApp.base_url=${NB_PREFIX}"]
-
-## add time news roman
-# matplotlibでTimes New Romanが意図せずボールド体になってしまうときの対処法
-# https://qiita.com/Miyabi1456/items/ef7a83c239cf0d9478f9
-# path: /opt/conda/lib/python3.6/site-packages/matplotlib/font_manger.py
-# matplotlibでTimes New Romanを使うためのTips
-# http://kenbo.hatenablog.com/entry/2018/11/28/111639
-
